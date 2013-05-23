@@ -24,9 +24,9 @@ class Game
   end
 
   def move
+    begin
     move_array = @current_player.move(@board)
     start_position = move_array[0][1]
-    begin
       if @board.color(start_position) == @other_player.color
         raise InvalidMoveError 
       end

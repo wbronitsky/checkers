@@ -24,7 +24,7 @@ class HumanPlayer
       type_of_move = move_array.first
       start_position = move_array[1].split(",").map(&:to_i)
       end_position = move_array.last.split(",").map(&:to_i)
-      output << [type_of_move, start_position, end_position]
+      output << [type_of_move, start_position, end_position
     end
     output
   end
