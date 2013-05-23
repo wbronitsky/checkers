@@ -15,7 +15,8 @@ class Game
   
   def play
     while true
-      input_loop
+      move_array, start_position = get_input
+      make_move(move_array, start_position)
       @current_player, @other_player = @other_player, @current_player
       @board.king_check
       break if win?(@other_player.color)
@@ -23,9 +24,13 @@ class Game
     puts "#{@current_player.color} wins!"
   end
   
-  def input_loop
+  def get_input
     move_array = @current_player.move(@board)
     start_position = move_array[0][1]
+    [move_array, start_position]
+  end
+  
+  def make_move(move_array, start_position)
     begin
       if @board.color(start_position) == @other_player.color
         raise InvalidMoveError 

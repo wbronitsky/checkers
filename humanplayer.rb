@@ -12,6 +12,12 @@ class HumanPlayer
     puts "How would you like to move?"
     puts "Formatted as: jump/slide starty,startx endy,endx: jump start end..."
     input = gets.chomp.split(":")
+    parsed_input(input)
+  end
+  
+  private 
+  
+  def parsed_input(input)
     output = []
     input.each do |move|
       move_array = move.split(" ")
