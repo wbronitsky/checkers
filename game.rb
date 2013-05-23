@@ -15,22 +15,17 @@ class Game
   
   def play
     while true
-      move_array, start_position = get_input
-      make_move(move_array, start_position)
+      move
       @current_player, @other_player = @other_player, @current_player
       @board.king_check
       break if win?(@other_player.color)
     end
     puts "#{@current_player.color} wins!"
   end
-  
-  def get_input
+
+  def move
     move_array = @current_player.move(@board)
     start_position = move_array[0][1]
-    [move_array, start_position]
-  end
-  
-  def make_move(move_array, start_position)
     begin
       if @board.color(start_position) == @other_player.color
         raise InvalidMoveError 
@@ -38,10 +33,10 @@ class Game
       @board.space_contents(start_position).perform_moves(move_array, @board)
     rescue InvalidMoveError => e
       puts "Not a valid move"
-      input_loop
+      move
     rescue NoMethodError => n
       puts "Please select an actual piece"
-      input_loop
+      move
     end
   end
   
