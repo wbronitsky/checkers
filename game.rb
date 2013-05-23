@@ -17,9 +17,9 @@ class Game
     while true
       input_loop
       @current_player, @other_player = @other_player, @current_player
+      @board.king_check
       break if win?(@other_player.color)
     end
-    @board.king_check
     puts "#{@current_player.color} wins!"
   end
   

@@ -2,7 +2,7 @@ class InvalidMoveError < StandardError
 end
 
 class Piece
-  attr_accessor :color ,:display, :king, :possible_vectors
+  attr_accessor :color ,:display, :king, :possible_vectors, :king_vectors
   
   def initialize(color)
     @color = color
@@ -14,9 +14,10 @@ class Piece
   
   def slide_moves(current_pos, board)
     slide_moves = []
-    possibe_vectos = (self.king ? self.king_vectors : possible_vectors)
-    possible_vectors.each do |vector|
+    use_vectors = (self.king ? self.king_vectors : self.possible_vectors)
+    use_vectors.each do |vector|
       new_position = adjusted_position(current_pos, vector) 
+      next unless on_board?(new_position)
       slide_moves << new_position if board.space_contents(new_position) == :_
     end
     slide_moves
@@ -24,12 +25,14 @@ class Piece
   
   def jump_moves(current_pos, board, color)
     color = (color == :white ? :black : :white)
+    use_vectors = (self.king ? self.king_vectors : self.possible_vectors)
     jump_moves = {}
-    possibe_vectos = (self.king ? self.king_vectors : possible_vectors)
-    possible_vectors.each do |vector|
+    use_vectors.each do |vector|
       new_position = adjusted_position(current_pos, vector)
+      next unless on_board?(new_position)
       if board.color(new_position) == color
         jump_position = adjusted_position(new_position, vector)
+        next unless on_board?(jump_position)
         jump_moves[jump_position] = new_position if board.space_contents(jump_position) == :_
       end
     end
@@ -37,6 +40,8 @@ class Piece
   end
   
   def perform_slide(current_pos, end_pos, board)
+    color = board.space_contents(current_pos).color
+    raise InvalidMoveError.new unless jump_moves(current_pos, board, color).empty?
     slide_moves = slide_moves(current_pos, board)
     if slide_moves.include?(end_pos)
       board.move_piece(current_pos, end_pos, self) 
@@ -65,10 +70,11 @@ class Piece
   
   def perform_moves!(move_sequence, board)
     #each move will be: [slide, start, end], [jump, start, end]
-    move_sequence.each do |move|
+    move_sequence.each_with_index do |move , index|
       type = move.shift
       start_pos, end_pos = move
       if type == "slide"
+        raise InvalidMoveError.new if index > 0
         value = perform_slide(start_pos, end_pos, board)
         raise InvalidMoveError.new unless value == true
       else

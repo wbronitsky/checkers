@@ -76,12 +76,12 @@ class Board
   
   def king_check
     @board.each_with_index do |line, y|
-      line.each do |space|
-        if space.color == :white && y == 7
+      line.each_with_index do |space, x|
+        if color([y,x]) == :white && y == 7
           space.king = true
           space.display = "\u2654"
         end
-        if space.color == :black and y == 0
+        if color([y,x]) == :black and y == 0
           space.king = true
           space.display = "\u265A"
         end
