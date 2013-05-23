@@ -19,11 +19,16 @@ class Board
 
   def render
     print "  0 1 2 3 4 5 6 7\n"
-    @board.each_with_index do |line, index|
-      print index
-      line.each do |position|
-        print " "
-        print (position == :_ ? :_ : position.display)
+    @board.each_with_index do |line, line_number|
+      print line_number
+      line.each_with_index do |position, col_number|
+        if (line_number + col_number).even?
+          background = {:background => :cyan}
+        else
+          background = {:background => :white}
+        end
+        print " ".colorize(background)
+        print (position == :_ ? " " : position.display).colorize(:black).colorize(background)
       end
       print "\n"
     end
