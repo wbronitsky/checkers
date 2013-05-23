@@ -1,4 +1,6 @@
 require './piece.rb'
+require 'colorize'
+
 class Board
   attr_accessor :board
   
@@ -66,14 +68,19 @@ class Board
     return nil if space_contents(position) == :_
     space_contents(position).color
   end
+  
+  def king_check
+    @board.each_with_index do |line, y|
+      line.each do |space|
+        if space.color == :white && y == 7
+          space.king = true
+          space.display = "\u2654"
+        end
+        if space.color == :black and y == 0
+          space.king = true
+          space.display = "\u265A"
+        end
+      end
+    end
+  end   
 end
-
-board = Board.new
-board.render
-board.space_contents([2,1]).perform_slide([2,1],[3,2], board)
-board.render
-board.space_contents([5,2]).perform_slide([5,2],[4,3], board)
-board.render
-board.space_contents([4,3]).perform_jump([4,3], [2,1], board)
-board.render
-
